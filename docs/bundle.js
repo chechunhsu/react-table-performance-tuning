@@ -92,7 +92,13 @@ var _react = __webpack_require__("./node_modules/react/index.js");
 
 var _react2 = _interopRequireDefault(_react);
 
+var _chainedFunction = __webpack_require__("./node_modules/chained-function/lib/index.js");
+
+var _chainedFunction2 = _interopRequireDefault(_chainedFunction);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -126,7 +132,9 @@ var Checkbox = (_temp = _class = function (_PureComponent) {
         value: function render() {
             var _this2 = this;
 
-            var props = _extends({}, this.props);
+            var _props = this.props,
+                onChange = _props.onChange,
+                props = _objectWithoutProperties(_props, ['onChange']);
 
             delete props.indeterminate;
 
@@ -134,8 +142,21 @@ var Checkbox = (_temp = _class = function (_PureComponent) {
                 type: 'checkbox',
                 ref: function ref(el) {
                     _this2.el = el;
-                }
+                },
+                onChange: (0, _chainedFunction2.default)(function () {
+                    _this2.el.indeterminate = _this2.props.indeterminate;
+                }, onChange)
             }));
+        }
+    }, {
+        key: 'checked',
+        get: function get() {
+            return this.el.checked;
+        }
+    }, {
+        key: 'indeterminate',
+        get: function get() {
+            return this.el.indeterminate;
         }
     }]);
 
@@ -226,7 +247,7 @@ var Selectable = (_temp2 = _class = function (_PureComponent) {
                 return {
                     data: state.data.map(function (item) {
                         return _extends({}, item, {
-                            checked: !checked
+                            checked: !item.checked
                         });
                     })
                 };
@@ -495,7 +516,7 @@ _reactDom2.default.render(_react2.default.createElement(App, null), document.get
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__("./node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!./node_modules/stylus-loader/index.js!./node_modules/stylint-loader/index.js!./examples/index.styl");
+var content = __webpack_require__("./node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!./node_modules/stylus-loader/index.js!./examples/index.styl");
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -509,8 +530,8 @@ if(content.locals) module.exports = content.locals;
 if(false) {
 	// When the styles change, update the <style> tags
 	if(!content.locals) {
-		module.hot.accept("!!../node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!../node_modules/stylus-loader/index.js!../node_modules/stylint-loader/index.js!./index.styl", function() {
-			var newContent = require("!!../node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!../node_modules/stylus-loader/index.js!../node_modules/stylint-loader/index.js!./index.styl");
+		module.hot.accept("!!../node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!../node_modules/stylus-loader/index.js!./index.styl", function() {
+			var newContent = require("!!../node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!../node_modules/stylus-loader/index.js!./index.styl");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -1224,6 +1245,57 @@ function getOption(options, name, defaultValue) {
 
 /***/ }),
 
+/***/ "./node_modules/chained-function/lib/chained-function.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    for (var _len = arguments.length, funcs = Array(_len), _key = 0; _key < _len; _key++) {
+        funcs[_key] = arguments[_key];
+    }
+
+    return funcs.filter(function (func) {
+        return typeof func === 'function';
+    }).reduce(function (accumulator, func) {
+        if (accumulator === null) {
+            return func;
+        }
+
+        return function chainedFunction() {
+            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                args[_key2] = arguments[_key2];
+            }
+
+            accumulator.apply(this, args);
+            func.apply(this, args);
+        };
+    }, null);
+};
+
+/***/ }),
+
+/***/ "./node_modules/chained-function/lib/index.js":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _chainedFunction = __webpack_require__("./node_modules/chained-function/lib/chained-function.js");
+
+var _chainedFunction2 = _interopRequireDefault(_chainedFunction);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports = _chainedFunction2.default;
+
+/***/ }),
+
 /***/ "./node_modules/classnames/index.js":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1310,7 +1382,7 @@ exports.push([module.i, "/*!\n * trendmicro-ui v0.4.4\n * https://github.com/tre
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!./node_modules/stylus-loader/index.js!./node_modules/stylint-loader/index.js!./examples/index.styl":
+/***/ "./node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!./node_modules/stylus-loader/index.js!./examples/index.styl":
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/css-base.js")(undefined);
@@ -1327,7 +1399,7 @@ exports.locals = {
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!./node_modules/stylus-loader/index.js!./node_modules/stylint-loader/index.js!./src/index.styl":
+/***/ "./node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!./node_modules/stylus-loader/index.js!./src/index.styl":
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__("./node_modules/css-loader/lib/css-base.js")(undefined);
@@ -26180,6 +26252,8 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                 }
             },
             setTableSize: function setTableSize() {
+                if (_this.lockSetTableSize) return;
+
                 if (_this.tableWrapper) {
                     var maxHeight = _this.props.maxHeight;
 
@@ -26190,6 +26264,8 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                     var tableHeight = maxHeight - headerHeight - footerHeight - parseInt(tableTopBorder, 10) - parseInt(tableBottomBorder, 10);
                     _this.actions.sizeTable(tableHeight);
                 }
+
+                _this.lockSetTableSize = true;
             },
             sizeTable: function sizeTable(tablehHight) {
                 if (_this.mainTable) {
@@ -26485,16 +26561,24 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                 var i = void 0;
                 var j = void 0;
                 var bodyCell = void 0;
+                var cellWidths = _this.state.cellWidths;
+
+
                 for (i = 0; i < bodyRows.length; i++) {
                     bodyCell = _helper2.default.getSubElements(bodyRows[i], '.' + _index2.default.td);
                     totalWidth = 0;
                     for (j = 0; j < bodyCell.length; j++) {
                         cellWidth = cellsWidth[j] || 0;
-                        bodyCell[j].style.width = cellWidth + 'px';
-                        totalWidth += cellWidth;
+
+                        cellWidths[j] = Math.max(cellWidths[j] || 0, cellWidth);
+
+                        bodyCell[j].style.width = cellWidths[j] + 'px';
+                        totalWidth += cellWidths[j];
                     }
                     bodyRows[i].style.width = totalWidth + 'px';
                 }
+
+                _this.setState({ cellWidths: cellWidths });
             },
             setMainTableBodyCellHeight: function setMainTableBodyCellHeight(rowsHeight) {
                 var tBody = _this.mainTable.tableBody.body;
@@ -26556,9 +26640,22 @@ var Table = (_temp2 = _class = function (_PureComponent) {
     _createClass(Table, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
+            var _this2 = this;
+
             var setTableSize = this.actions.setTableSize;
 
-            this.onResizeDebounce = (0, _lodash2.default)(setTableSize, 100);
+
+            this.firstResizeLock = false;
+            this.onResizeDebounce = (0, _lodash2.default)(function (_) {
+                if (!_this2.firstResizeLock) {
+                    _this2.firstResizeLock = true;
+                    return;
+                }
+
+                _this2.lockSetTableSize = false;
+                _this2.setState({ cellWidths: [] });
+                setTableSize();
+            }, 100);
             this.resizer.listenTo(this.tableWrapper, this.onResizeDebounce);
             setTableSize();
         }
@@ -26576,26 +26673,28 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                 this.setState({ thisColumns: this.columnsParser() });
             }
         }
-    }, {
-        key: 'componentDidUpdate',
-        value: function componentDidUpdate(prevProps, prevState) {
-            if (prevProps.maxHeight !== this.props.maxHeight || prevProps.data !== this.props.data) {
-                this.actions.setTableSize();
-            }
-        }
+
+        // componentDidUpdate(prevProps, prevState) {
+        //     if (prevProps.maxHeight !== this.props.maxHeight ||
+        //         prevProps.data !== this.props.data) {
+        //         this.actions.setTableSize();
+        //     }
+        // }
+
     }, {
         key: 'getInitState',
         value: function getInitState() {
             return {
                 currentHoverKey: null,
                 scrollTop: 0,
-                thisColumns: this.columnsParser()
+                thisColumns: this.columnsParser(),
+                cellWidths: []
             };
         }
     }, {
         key: 'columnsParser',
         value: function columnsParser() {
-            var _this2 = this;
+            var _this3 = this;
 
             // Checking columns
             var filterColumns = [];
@@ -26604,7 +26703,7 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                 if (obj) {
                     var cloneColumn = _extends({}, obj);
                     // Set default value to column's key attribute.
-                    cloneColumn.key = cloneColumn.key !== undefined ? cloneColumn.key : _this2.uniqueid();
+                    cloneColumn.key = cloneColumn.key !== undefined ? cloneColumn.key : _this3.uniqueid();
                     filterColumns.push(cloneColumn);
                 }
             });
@@ -26634,12 +26733,13 @@ var Table = (_temp2 = _class = function (_PureComponent) {
     }, {
         key: 'renderTable',
         value: function renderTable() {
-            var _this3 = this;
+            var _this4 = this;
 
             var columns = this.state.thisColumns;
             var _state = this.state,
                 currentHoverKey = _state.currentHoverKey,
                 scrollTop = _state.scrollTop;
+            var cellWidths = this.state.cellWidths;
             var _actions = this.actions,
                 detectScrollTarget = _actions.detectScrollTarget,
                 handleBodyScroll = _actions.handleBodyScroll,
@@ -26654,6 +26754,7 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                 useFixedHeader = _props.useFixedHeader,
                 rowClassName = _props.rowClassName,
                 rowKey = _props.rowKey;
+
 
             return _react2.default.createElement(_TableTemplate2.default, {
                 columns: columns,
@@ -26672,8 +26773,9 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                 useFixedHeader: useFixedHeader,
                 rowClassName: rowClassName,
                 rowKey: rowKey,
+                cellWidths: cellWidths,
                 ref: function ref(node) {
-                    _this3.mainTable = node;
+                    _this4.mainTable = node;
                 }
 
             });
@@ -26681,7 +26783,7 @@ var Table = (_temp2 = _class = function (_PureComponent) {
     }, {
         key: 'renderFixedLeftTable',
         value: function renderFixedLeftTable() {
-            var _this4 = this;
+            var _this5 = this;
 
             var fixedColumns = this.leftColumns();
             var _state2 = this.state,
@@ -26721,14 +26823,14 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                 rowClassName: rowClassName,
                 rowKey: rowKey,
                 ref: function ref(node) {
-                    _this4.tableFixedLeft = node;
+                    _this5.tableFixedLeft = node;
                 }
             });
         }
     }, {
         key: 'renderTitle',
         value: function renderTitle() {
-            var _this5 = this;
+            var _this6 = this;
 
             var title = this.props.title;
 
@@ -26738,7 +26840,7 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                 {
                     className: _index2.default.title,
                     ref: function ref(node) {
-                        _this5.title = node;
+                        _this6.title = node;
                     }
                 },
                 content
@@ -26747,7 +26849,7 @@ var Table = (_temp2 = _class = function (_PureComponent) {
     }, {
         key: 'renderFooter',
         value: function renderFooter() {
-            var _this6 = this;
+            var _this7 = this;
 
             var footer = this.props.footer;
 
@@ -26757,7 +26859,7 @@ var Table = (_temp2 = _class = function (_PureComponent) {
                 {
                     className: _index2.default.tfoot,
                     ref: function ref(node) {
-                        _this6.foot = node;
+                        _this7.foot = node;
                     }
                 },
                 content
@@ -26781,7 +26883,7 @@ var Table = (_temp2 = _class = function (_PureComponent) {
     }, {
         key: 'render',
         value: function render() {
-            var _this7 = this;
+            var _this8 = this;
 
             var _props3 = this.props,
                 data = _props3.data,
@@ -26809,22 +26911,26 @@ var Table = (_temp2 = _class = function (_PureComponent) {
             return _react2.default.createElement(
                 'div',
                 _extends({}, props, {
-                    className: (0, _classnames2.default)(className, _index2.default.tableWrapper, _defineProperty({}, _index2.default.tableMinimalism, !bordered), _defineProperty({}, _index2.default.tableBordered, bordered), _defineProperty({}, _index2.default.tableExtendColumnWidth, !justified), _defineProperty({}, _index2.default.tableFixedHeader, useFixedHeader), _defineProperty({}, _index2.default.tableNoData, !data || data.length === 0), _defineProperty({}, _index2.default.tableHover, hoverable), _defineProperty({}, _index2.default.tableSortable, sortable)),
+                    className: (0, _classnames2.default)(className, _index2.default.tableWrapper,
+                    // { [styles.tableMinimalism]: !bordered },
+                    _defineProperty({}, _index2.default.tableBordered, bordered),
+                    // { [styles.tableExtendColumnWidth]: !justified },
+                    // { [styles.tableFixedHeader]: useFixedHeader },
+                    // { [styles.tableNoData]: !data || data.length === 0 },
+                    _defineProperty({}, _index2.default.tableHover, hoverable)
+                    // { [styles.tableSortable]: sortable }
+                    ),
                     ref: function ref(node) {
                         if (node) {
-                            _this7.tableWrapper = node;
+                            _this8.tableWrapper = node;
                         }
                     }
                 }),
-                title && this.renderTitle(),
                 _react2.default.createElement(
                     'div',
                     { className: _index2.default.tableArea },
-                    this.renderTable(),
-                    this.isAnyColumnsLeftFixed() && this.renderFixedLeftTable(),
-                    loading && this.renderLoader()
-                ),
-                footer && this.renderFooter()
+                    this.renderTable()
+                )
             );
         }
     }]);
@@ -26903,13 +27009,33 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var CELL_HEIGHT = 37;
+var HEADER_HEIGHT = 38;
+
 var TableBody = (_temp = _class = function (_PureComponent) {
     _inherits(TableBody, _PureComponent);
 
-    function TableBody() {
+    function TableBody(props) {
         _classCallCheck(this, TableBody);
 
-        return _possibleConstructorReturn(this, (TableBody.__proto__ || Object.getPrototypeOf(TableBody)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (TableBody.__proto__ || Object.getPrototypeOf(TableBody)).call(this, props));
+
+        _this.handleScroll = function (e) {
+            var bodyHeight = e.target.clientHeight;
+            var scrollTop = e.target.scrollTop;
+            var startIndex = Math.floor(scrollTop / CELL_HEIGHT) - 1;
+            var endIndex = startIndex + Math.ceil(bodyHeight / CELL_HEIGHT);
+
+            _this.setState(function (_) {
+                return { startIndex: startIndex, endIndex: endIndex };
+            });
+        };
+
+        _this.state = {
+            startIndex: 0,
+            endIndex: 9
+        };
+        return _this;
     }
 
     _createClass(TableBody, [{
@@ -26920,7 +27046,7 @@ var TableBody = (_temp = _class = function (_PureComponent) {
                 onTouchStart = _props.onTouchStart,
                 onScroll = _props.onScroll;
 
-            this.body.addEventListener('scroll', onScroll);
+            this.body.parentNode.addEventListener('scroll', this.handleScroll);
             this.body.addEventListener('mouseover', onMouseOver);
             this.body.addEventListener('touchstart', onTouchStart);
         }
@@ -26932,19 +27058,18 @@ var TableBody = (_temp = _class = function (_PureComponent) {
                 onTouchStart = _props2.onTouchStart,
                 onScroll = _props2.onScroll;
 
-            this.body.removeEventListener('scroll', onScroll);
+            this.body.parentNode.removeEventListener('scroll', this.handleScroll);
             this.body.removeEventListener('mouseover', onMouseOver);
             this.body.removeEventListener('touchstart', onTouchStart);
         }
-    }, {
-        key: 'componentDidUpdate',
-        value: function componentDidUpdate(prevProps, prevState) {
-            var scrollTop = this.props.scrollTop;
 
-            if (this.body.scrollTop !== scrollTop) {
-                this.body.scrollTop = scrollTop;
-            }
-        }
+        // componentDidUpdate(prevProps, prevState) {
+        //     const { scrollTop } = this.props;
+        //     if (this.body.scrollTop !== scrollTop) {
+        //         this.body.scrollTop = scrollTop;
+        //     }
+        // }
+
     }, {
         key: 'getRowKey',
         value: function getRowKey(record, index) {
@@ -26966,9 +27091,17 @@ var TableBody = (_temp = _class = function (_PureComponent) {
                 onRowHover = _props3.onRowHover,
                 onRowClick = _props3.onRowClick,
                 records = _props3.records,
-                rowClassName = _props3.rowClassName;
+                rowClassName = _props3.rowClassName,
+                cellWidths = _props3.cellWidths;
+            var _state = this.state,
+                startIndex = _state.startIndex,
+                endIndex = _state.endIndex;
+
+            var startHeight = startIndex * CELL_HEIGHT;
+            var endHeight = (records.length - endIndex) * CELL_HEIGHT;
 
             var noData = !records || records.length === 0;
+
             return _react2.default.createElement(
                 'div',
                 {
@@ -26977,27 +27110,27 @@ var TableBody = (_temp = _class = function (_PureComponent) {
                         _this2.body = node;
                     }
                 },
-                records.map(function (row, index) {
+                _react2.default.createElement('div', { style: { height: startHeight } }),
+                records.filter(function (row, index) {
+                    return index >= startIndex && index <= endIndex;
+                }).map(function (row, index) {
                     var key = _this2.getRowKey(row, index);
                     return _react2.default.createElement(_TableRow2.default, {
                         columns: columns,
-                        currentHoverKey: currentHoverKey,
-                        expandedRowKeys: expandedRowKeys,
-                        expandedRowRender: expandedRowRender,
-                        hoverKey: key,
+                        currentHoverKey: currentHoverKey
+                        // expandedRowKeys={expandedRowKeys}
+                        // expandedRowRender={expandedRowRender}
+                        , hoverKey: key,
                         index: index,
-                        key: key,
-                        onHover: onRowHover,
-                        onRowClick: onRowClick,
+                        key: key
+                        // onHover={onRowHover}
+                        , onRowClick: onRowClick,
                         record: row,
-                        rowClassName: rowClassName
+                        rowClassName: rowClassName,
+                        cellWidths: cellWidths
                     });
                 }),
-                noData && _react2.default.createElement(
-                    'div',
-                    { className: _index2.default.tablePlaceholder },
-                    emptyText()
-                )
+                _react2.default.createElement('div', { style: { height: endHeight } })
             );
         }
     }]);
@@ -27017,7 +27150,8 @@ var TableBody = (_temp = _class = function (_PureComponent) {
     records: _propTypes2.default.array,
     rowClassName: _propTypes2.default.func,
     rowKey: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.func]),
-    scrollTop: _propTypes2.default.number
+    scrollTop: _propTypes2.default.number,
+    cellWidths: _propTypes2.default.array
 }, _class.defaultProps = {
     emptyText: function emptyText() {
         return 'No Data';
@@ -27088,14 +27222,18 @@ var TableCell = (_temp = _class = function (_Component) {
     _createClass(TableCell, [{
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState) {
-            return typeof nextProps.column.render === 'function' || nextProps.column !== this.props.column || nextProps.record !== this.props.record;
+            if (typeof nextProps.column.render !== 'function') return false;
+            if (nextProps.record.checked === this.props.record.checked) return false;
+
+            return true;
         }
     }, {
         key: 'render',
         value: function render() {
             var _props = this.props,
                 column = _props.column,
-                record = _props.record;
+                record = _props.record,
+                cellWidth = _props.cellWidth;
 
             var render = column.render;
             // dataKey is an alias for dataIndex
@@ -27106,7 +27244,9 @@ var TableCell = (_temp = _class = function (_Component) {
                 'div',
                 {
                     className: (0, _classnames2.default)(_index2.default.td, column.className, column.cellClassName),
-                    style: _extends({}, column.style, column.cellStyle)
+                    style: _extends({}, column.style, column.cellStyle, {
+                        minWidth: cellWidth
+                    })
                 },
                 _react2.default.createElement(
                     'div',
@@ -27120,10 +27260,12 @@ var TableCell = (_temp = _class = function (_Component) {
     return TableCell;
 }(_react.Component), _class.propTypes = {
     column: _propTypes2.default.object,
-    record: _propTypes2.default.object
+    record: _propTypes2.default.object,
+    cellWidth: _propTypes2.default.number
 }, _class.defaultProps = {
     column: {},
-    record: {}
+    record: {},
+    cellWidth: 0
 }, _temp);
 exports.default = TableCell;
 
@@ -27185,16 +27327,16 @@ var TableHeader = (_temp = _class = function (_Component) {
     }
 
     _createClass(TableHeader, [{
-        key: 'componentDidUpdate',
-        value: function componentDidUpdate(prevProps, prevState) {
-            var scrollLeft = this.props.scrollLeft;
-
-            if (this.header.scrollLeft !== scrollLeft) {
-                this.header.scrollLeft = scrollLeft;
-            }
-        }
-    }, {
         key: 'shouldComponentUpdate',
+
+
+        // componentDidUpdate(prevProps, prevState) {
+        //     const { scrollLeft } = this.props;
+        //     if (this.header.scrollLeft !== scrollLeft) {
+        //         this.header.scrollLeft = scrollLeft;
+        //     }
+        // }
+
         value: function shouldComponentUpdate(nextProps, nextState) {
             return nextProps.columns.some(function (obj, index, array) {
                 return typeof obj.title === 'function';
@@ -27251,8 +27393,14 @@ var TableHeader = (_temp = _class = function (_Component) {
                     'div',
                     {
                         key: key,
-                        className: (0, _classnames2.default)(_index2.default.th, column.className, column.headerClassName),
-                        style: _extends({}, column.style, column.headerStyle)
+                        className: (0, _classnames2.default)(_index2.default.th
+                        // column.className,
+                        // column.headerClassName
+                        )
+                        // style={{
+                        //     ...column.style,
+                        //     ...column.headerStyle
+                        // }}
                     },
                     _react2.default.createElement(
                         'div',
@@ -27359,54 +27507,41 @@ var TableRow = (_temp2 = _class = function (_PureComponent) {
                     index = _this$props.index;
 
                 onRowClick(record, index, e);
-            },
-            handleRowMouseLeave: function handleRowMouseLeave() {
-                var _this$props2 = _this.props,
-                    hoverKey = _this$props2.hoverKey,
-                    onHover = _this$props2.onHover;
-
-                onHover(false, hoverKey);
-            },
-            handleRowMouseOver: function handleRowMouseOver() {
-                var _this$props3 = _this.props,
-                    hoverKey = _this$props3.hoverKey,
-                    onHover = _this$props3.onHover;
-
-                onHover(true, hoverKey);
             }
+            // handleRowMouseLeave: () => {
+            //     const { hoverKey, onHover } = this.props;
+            //     onHover(false, hoverKey);
+            // },
+            // handleRowMouseOver: () => {
+            //     const { hoverKey, onHover } = this.props;
+            //     onHover(true, hoverKey);
+            // }
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(TableRow, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var _actions = this.actions,
-                handleRowMouseOver = _actions.handleRowMouseOver,
-                handleRowMouseLeave = _actions.handleRowMouseLeave;
-
-            this.row.addEventListener('mouseenter', handleRowMouseOver);
-            this.row.addEventListener('mouseleave', handleRowMouseLeave);
-        }
-    }, {
-        key: 'componentWillUnmount',
-        value: function componentWillUnmount() {
-            var _actions2 = this.actions,
-                handleRowMouseOver = _actions2.handleRowMouseOver,
-                handleRowMouseLeave = _actions2.handleRowMouseLeave;
-
-            this.row.removeEventListener('mouseenter', handleRowMouseOver);
-            this.row.removeEventListener('mouseleave', handleRowMouseLeave);
-        }
-    }, {
-        key: 'isRowExpanded',
-        value: function isRowExpanded(record, key) {
-            var rows = this.props.expandedRowKeys.filter(function (i) {
-                return i === key;
-            });
-            return rows[0];
-        }
-    }, {
         key: 'render',
+
+
+        // componentDidMount() {
+        //     const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
+        //     this.row.addEventListener('mouseenter', handleRowMouseOver);
+        //     this.row.addEventListener('mouseleave', handleRowMouseLeave);
+        // }
+        //
+        // componentWillUnmount() {
+        //     const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
+        //     this.row.removeEventListener('mouseenter', handleRowMouseOver);
+        //     this.row.removeEventListener('mouseleave', handleRowMouseLeave);
+        // }
+
+        // isRowExpanded (record, key) {
+        //     const rows = this.props.expandedRowKeys.filter((i) => {
+        //         return i === key;
+        //     });
+        //     return rows[0];
+        // }
+
         value: function render() {
             var _this2 = this;
 
@@ -27416,15 +27551,17 @@ var TableRow = (_temp2 = _class = function (_PureComponent) {
                 expandedRowRender = _props.expandedRowRender,
                 hoverKey = _props.hoverKey,
                 record = _props.record,
-                rowClassName = _props.rowClassName;
+                rowClassName = _props.rowClassName,
+                cellWidths = _props.cellWidths;
             var handleRowClick = this.actions.handleRowClick;
 
             var className = rowClassName(record, hoverKey);
-            var isRowExpanded = this.isRowExpanded(record, hoverKey);
-            var expandedRowContent = void 0;
-            if (expandedRowRender && isRowExpanded) {
-                expandedRowContent = expandedRowRender(record, hoverKey);
-            }
+            // const isRowExpanded = this.isRowExpanded(record, hoverKey);
+            // let expandedRowContent;
+            // if (expandedRowRender && isRowExpanded) {
+            //     expandedRowContent = expandedRowRender(record, hoverKey);
+            // }
+
             return _react2.default.createElement(
                 'div',
                 {
@@ -27435,18 +27572,31 @@ var TableRow = (_temp2 = _class = function (_PureComponent) {
                     onClick: handleRowClick
                 },
                 columns.map(function (column, i) {
-                    var index = i++;
-                    return _react2.default.createElement(_TableCell2.default, {
-                        key: hoverKey + '_' + index,
-                        column: column,
-                        record: record
-                    });
-                }),
-                isRowExpanded && _react2.default.createElement(
-                    'section',
-                    { className: _index2.default['tr-expand'] },
-                    expandedRowContent
-                )
+                    // return (
+                    //     <TableCell
+                    //         key={`${hoverKey}_${i}`}
+                    //         column={column}
+                    //         record={record}
+                    //         cellWidth={cellWidths[i]}
+                    //     />
+                    // );
+                    var render = column.render;
+                    var text = record && record[column.dataKey || column.dataIndex];
+
+                    return _react2.default.createElement(
+                        'div',
+                        {
+                            key: i,
+                            className: _index2.default.td,
+                            style: { minWidth: cellWidths[i] }
+                        },
+                        _react2.default.createElement(
+                            'div',
+                            { className: _index2.default.tdContent },
+                            typeof render === 'function' ? render(text, record) : text
+                        )
+                    );
+                })
             );
         }
     }]);
@@ -27462,7 +27612,8 @@ var TableRow = (_temp2 = _class = function (_PureComponent) {
     onHover: _propTypes2.default.func,
     onRowClick: _propTypes2.default.func,
     record: _propTypes2.default.object,
-    rowClassName: _propTypes2.default.func
+    rowClassName: _propTypes2.default.func,
+    cellWidths: _propTypes2.default.array
 }, _class.defaultProps = {
     expandedRowKeys: [],
     expandedRowRender: function expandedRowRender() {},
@@ -27471,7 +27622,8 @@ var TableRow = (_temp2 = _class = function (_PureComponent) {
     record: {},
     rowClassName: function rowClassName() {
         return '';
-    }
+    },
+    cellWidths: []
 }, _temp2);
 exports.default = TableRow;
 
@@ -27598,7 +27750,8 @@ var TableTemplate = (_temp2 = _class = function (_PureComponent) {
                 onRowClick = _props.onRowClick,
                 rowClassName = _props.rowClassName,
                 rowKey = _props.rowKey,
-                scrollTop = _props.scrollTop;
+                scrollTop = _props.scrollTop,
+                cellWidths = _props.cellWidths;
             var handleBodyScroll = this.actions.handleBodyScroll;
 
             return _react2.default.createElement(_TableBody2.default, {
@@ -27620,7 +27773,8 @@ var TableTemplate = (_temp2 = _class = function (_PureComponent) {
                     }
                 },
                 rowClassName: rowClassName,
-                rowKey: rowKey
+                rowKey: rowKey,
+                cellWidths: cellWidths
             });
         }
     }, {
@@ -27665,7 +27819,8 @@ var TableTemplate = (_temp2 = _class = function (_PureComponent) {
     rowKey: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.func]),
     scrollTop: _propTypes2.default.number,
     showHeader: _propTypes2.default.bool,
-    useFixedHeader: _propTypes2.default.bool
+    useFixedHeader: _propTypes2.default.bool,
+    cellWidths: _propTypes2.default.array
 }, _class.defaultProps = {
     showHeader: true
 }, _temp2);
@@ -27735,7 +27890,7 @@ module.exports = _Table2.default;
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__("./node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!./node_modules/stylus-loader/index.js!./node_modules/stylint-loader/index.js!./src/index.styl");
+var content = __webpack_require__("./node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!./node_modules/stylus-loader/index.js!./src/index.styl");
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -27749,8 +27904,8 @@ if(content.locals) module.exports = content.locals;
 if(false) {
 	// When the styles change, update the <style> tags
 	if(!content.locals) {
-		module.hot.accept("!!../node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!../node_modules/stylus-loader/index.js!../node_modules/stylint-loader/index.js!./index.styl", function() {
-			var newContent = require("!!../node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!../node_modules/stylus-loader/index.js!../node_modules/stylint-loader/index.js!./index.styl");
+		module.hot.accept("!!../node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!../node_modules/stylus-loader/index.js!./index.styl", function() {
+			var newContent = require("!!../node_modules/css-loader/index.js?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:8]!../node_modules/stylus-loader/index.js!./index.styl");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -27785,4 +27940,4 @@ exports.default = uniqueid;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=bundle.js.map?3e1e045c9bde839e4671
+//# sourceMappingURL=bundle.js.map?85e07e5473a9a5d8a5ac
