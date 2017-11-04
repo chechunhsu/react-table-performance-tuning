@@ -29,7 +29,7 @@ class Selectable extends PureComponent {
         this.setState(state => ({
             data: state.data.map(item => ({
                 ...item,
-                checked: !checked
+                checked: !item.checked
             }))
         }));
     };
