@@ -79,6 +79,8 @@ class Table extends PureComponent {
             }
         },
         setTableSize: () => {
+            if (this.lockSetTableSize) return;
+
             if (this.tableWrapper) {
                 const { maxHeight } = this.props;
                 const tableTopBorder = helper.getElementStyle(this.tableWrapper, 'border-top-width');
@@ -88,6 +90,8 @@ class Table extends PureComponent {
                 const tableHeight = maxHeight - headerHeight - footerHeight - parseInt(tableTopBorder, 10) - parseInt(tableBottomBorder, 10);
                 this.actions.sizeTable(tableHeight);
             }
+
+            this.lockSetTableSize = true;
         },
         sizeTable: (tablehHight) => {
             if (this.mainTable) {
@@ -392,16 +396,23 @@ class Table extends PureComponent {
             let i;
             let j;
             let bodyCell;
+            const { cellWidths } = this.state;
+
             for (i = 0; i < bodyRows.length; i++) {
                 bodyCell = helper.getSubElements(bodyRows[i], `.${styles.td}`);
                 totalWidth = 0;
                 for (j = 0; j < bodyCell.length; j++) {
                     cellWidth = cellsWidth[j] || 0;
-                    bodyCell[j].style.width = `${cellWidth}px`;
-                    totalWidth += cellWidth;
+
+                    cellWidths[j] = Math.max(cellWidths[j] || 0, cellWidth);
+
+                    bodyCell[j].style.width = `${cellWidths[j]}px`;
+                    totalWidth += cellWidths[j];
                 }
                 bodyRows[i].style.width = `${totalWidth}px`;
             }
+
+            this.setState({ cellWidths });
         },
         setMainTableBodyCellHeight: (rowsHeight) => {
             const tBody = this.mainTable.tableBody.body;
@@ -461,7 +472,18 @@ class Table extends PureComponent {
 
     componentDidMount() {
         const { setTableSize } = this.actions;
-        this.onResizeDebounce = debounce(setTableSize, 100);
+
+        this.firstResizeLock = false;
+        this.onResizeDebounce = debounce(_ => {
+          if (!this.firstResizeLock) {
+            this.firstResizeLock = true;
+            return;
+          }
+
+          this.lockSetTableSize = false;
+          this.setState({ cellWidths: [] });
+          setTableSize();
+        }, 100);
         this.resizer.listenTo(this.tableWrapper, this.onResizeDebounce);
         setTableSize();
     }
@@ -489,7 +511,8 @@ class Table extends PureComponent {
         return {
             currentHoverKey: null,
             scrollTop: 0,
-            thisColumns: this.columnsParser()
+            thisColumns: this.columnsParser(),
+            cellWidths: []
         };
     }
 
@@ -530,6 +553,7 @@ class Table extends PureComponent {
     renderTable() {
         const columns = this.state.thisColumns;
         const { currentHoverKey, scrollTop } = this.state;
+        const { cellWidths } = this.state;
         const { detectScrollTarget, handleBodyScroll, handleRowHover } = this.actions;
         const {
             data,
@@ -542,6 +566,7 @@ class Table extends PureComponent {
             rowClassName,
             rowKey
         } = this.props;
+
         return (
             <TableTemplate
                 columns={columns}
@@ -560,6 +585,7 @@ class Table extends PureComponent {
                 useFixedHeader={useFixedHeader}
                 rowClassName={rowClassName}
                 rowKey={rowKey}
+                cellWidths={cellWidths}
                 ref={node => {
                     this.mainTable = node;
                 }}

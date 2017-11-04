@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import styles from './index.styl';
 import TableRow from './TableRow';
 
+const CELL_HEIGHT = 37;
+const HEADER_HEIGHT = 38;
+
 class TableBody extends PureComponent {
     static propTypes = {
         columns: PropTypes.array,
@@ -18,7 +21,8 @@ class TableBody extends PureComponent {
         records: PropTypes.array,
         rowClassName: PropTypes.func,
         rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-        scrollTop: PropTypes.number
+        scrollTop: PropTypes.number,
+        cellWidths: PropTypes.array
     };
 
     static defaultProps = {
@@ -32,15 +36,33 @@ class TableBody extends PureComponent {
         rowKey: 'key'
     };
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            startIndex: 0,
+            endIndex: 11
+        };
+    }
+
+    handleScroll = e => {
+        const bodyHeight = e.target.clientHeight;
+        const scrollTop = e.target.scrollTop;
+        const startIndex = Math.floor(scrollTop / CELL_HEIGHT) - 1;
+        const endIndex = startIndex + Math.ceil(bodyHeight / CELL_HEIGHT);
+
+        this.setState(_ => ({ startIndex, endIndex}));
+    };
+
     componentDidMount() {
         const { onMouseOver, onTouchStart, onScroll } = this.props;
-        this.body.addEventListener('scroll', onScroll);
+        this.body.parentNode.addEventListener('scroll', this.handleScroll);
         this.body.addEventListener('mouseover', onMouseOver);
         this.body.addEventListener('touchstart', onTouchStart);
     }
     componentWillUnmount() {
         const { onMouseOver, onTouchStart, onScroll } = this.props;
-        this.body.removeEventListener('scroll', onScroll);
+        this.body.parentNode.removeEventListener('scroll', this.handleScroll);
         this.body.removeEventListener('mouseover', onMouseOver);
         this.body.removeEventListener('touchstart', onTouchStart);
     }
@@ -68,9 +90,15 @@ class TableBody extends PureComponent {
             onRowHover,
             onRowClick,
             records,
-            rowClassName
+            rowClassName,
+            cellWidths
         } = this.props;
+        const { startIndex, endIndex } = this.state;
+        const startHeight = startIndex * 37;
+        const endHeight = (records.length - endIndex) * 37;
+
         const noData = (!records || records.length === 0);
+
         return (
             <div
                 className={styles.tbody}
@@ -78,8 +106,9 @@ class TableBody extends PureComponent {
                     this.body = node;
                 }}
             >
+                <div style={{ height: startHeight }}/>
                 {
-                    records.map((row, index) => {
+                    records.filter((row, index) => index >= startIndex && index <= endIndex).map((row, index) => {
                         const key = this.getRowKey(row, index);
                         return (
                             <TableRow
@@ -94,6 +123,7 @@ class TableBody extends PureComponent {
                                 onRowClick={onRowClick}
                                 record={row}
                                 rowClassName={rowClassName}
+                                cellWidths={cellWidths}
                             />
                         );
                     })
@@ -104,6 +134,7 @@ class TableBody extends PureComponent {
                         { emptyText() }
                     </div>
                 }
+                <div style={{ height: endHeight }}/>
             </div>
         );
     }

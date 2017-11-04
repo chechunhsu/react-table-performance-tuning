@@ -15,7 +15,8 @@ class TableRow extends PureComponent {
         onHover: PropTypes.func,
         onRowClick: PropTypes.func,
         record: PropTypes.object,
-        rowClassName: PropTypes.func
+        rowClassName: PropTypes.func,
+        cellWidths: PropTypes.array
     };
 
     static defaultProps = {
@@ -26,7 +27,8 @@ class TableRow extends PureComponent {
         record: {},
         rowClassName: () => {
             return '';
-        }
+        },
+        cellWidths: []
     };
 
     actions = {
@@ -70,7 +72,8 @@ class TableRow extends PureComponent {
             expandedRowRender,
             hoverKey,
             record,
-            rowClassName
+            rowClassName,
+            cellWidths
         } = this.props;
         const { handleRowClick } = this.actions;
         const className = rowClassName(record, hoverKey);
@@ -79,6 +82,7 @@ class TableRow extends PureComponent {
         if (expandedRowRender && isRowExpanded) {
             expandedRowContent = expandedRowRender(record, hoverKey);
         }
+
         return (
             <div
                 className={classNames(
@@ -93,12 +97,13 @@ class TableRow extends PureComponent {
             >
                 {
                     columns.map((column, i) => {
-                        const index = i++;
+                        const index = i + 1;
                         return (
                             <TableCell
                                 key={`${hoverKey}_${index}`}
                                 column={column}
                                 record={record}
+                                cellWidth={cellWidths[i]}
                             />
                         );
                     })

@@ -7,12 +7,14 @@ import styles from './index.styl';
 class TableCell extends Component {
     static propTypes = {
         column: PropTypes.object,
-        record: PropTypes.object
+        record: PropTypes.object,
+        cellWidth: PropTypes.number
     };
 
     static defaultProps = {
         column: {},
-        record: {}
+        record: {},
+        cellWidth: 0
     };
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -26,7 +28,7 @@ class TableCell extends Component {
     }
 
     render() {
-        const { column, record } = this.props;
+        const { column, record, cellWidth } = this.props;
         const render = column.render;
         // dataKey is an alias for dataIndex
         const dataKey = (typeof column.dataKey !== 'undefined') ? column.dataKey : column.dataIndex;
@@ -41,7 +43,8 @@ class TableCell extends Component {
                 )}
                 style={{
                     ...column.style,
-                    ...column.cellStyle
+                    ...column.cellStyle,
+                    minWidth: cellWidth
                 }}
             >
                 <div className={styles.tdContent}>

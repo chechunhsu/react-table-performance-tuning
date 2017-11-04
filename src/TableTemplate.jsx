@@ -22,7 +22,8 @@ class TableTemplate extends PureComponent {
         rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
         scrollTop: PropTypes.number,
         showHeader: PropTypes.bool,
-        useFixedHeader: PropTypes.bool
+        useFixedHeader: PropTypes.bool,
+        cellWidths: PropTypes.array
     };
 
     static defaultProps = {
@@ -80,7 +81,8 @@ class TableTemplate extends PureComponent {
             onRowClick,
             rowClassName,
             rowKey,
-            scrollTop
+            scrollTop,
+            cellWidths
         } = this.props;
         const { handleBodyScroll } = this.actions;
         return (
@@ -104,6 +106,7 @@ class TableTemplate extends PureComponent {
                 }}
                 rowClassName={rowClassName}
                 rowKey={rowKey}
+                cellWidths={cellWidths}
             />
         );
     }
