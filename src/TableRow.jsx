@@ -36,34 +36,34 @@ class TableRow extends PureComponent {
             const { onRowClick, record, index } = this.props;
             onRowClick(record, index, e);
         },
-        handleRowMouseLeave: () => {
-            const { hoverKey, onHover } = this.props;
-            onHover(false, hoverKey);
-        },
-        handleRowMouseOver: () => {
-            const { hoverKey, onHover } = this.props;
-            onHover(true, hoverKey);
-        }
+        // handleRowMouseLeave: () => {
+        //     const { hoverKey, onHover } = this.props;
+        //     onHover(false, hoverKey);
+        // },
+        // handleRowMouseOver: () => {
+        //     const { hoverKey, onHover } = this.props;
+        //     onHover(true, hoverKey);
+        // }
     };
 
-    componentDidMount() {
-        const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
-        this.row.addEventListener('mouseenter', handleRowMouseOver);
-        this.row.addEventListener('mouseleave', handleRowMouseLeave);
-    }
+    // componentDidMount() {
+    //     const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
+    //     this.row.addEventListener('mouseenter', handleRowMouseOver);
+    //     this.row.addEventListener('mouseleave', handleRowMouseLeave);
+    // }
+    //
+    // componentWillUnmount() {
+    //     const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
+    //     this.row.removeEventListener('mouseenter', handleRowMouseOver);
+    //     this.row.removeEventListener('mouseleave', handleRowMouseLeave);
+    // }
 
-    componentWillUnmount() {
-        const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
-        this.row.removeEventListener('mouseenter', handleRowMouseOver);
-        this.row.removeEventListener('mouseleave', handleRowMouseLeave);
-    }
-
-    isRowExpanded (record, key) {
-        const rows = this.props.expandedRowKeys.filter((i) => {
-            return i === key;
-        });
-        return rows[0];
-    }
+    // isRowExpanded (record, key) {
+    //     const rows = this.props.expandedRowKeys.filter((i) => {
+    //         return i === key;
+    //     });
+    //     return rows[0];
+    // }
 
     render() {
         const {
@@ -77,11 +77,11 @@ class TableRow extends PureComponent {
         } = this.props;
         const { handleRowClick } = this.actions;
         const className = rowClassName(record, hoverKey);
-        const isRowExpanded = this.isRowExpanded(record, hoverKey);
-        let expandedRowContent;
-        if (expandedRowRender && isRowExpanded) {
-            expandedRowContent = expandedRowRender(record, hoverKey);
-        }
+        // const isRowExpanded = this.isRowExpanded(record, hoverKey);
+        // let expandedRowContent;
+        // if (expandedRowRender && isRowExpanded) {
+        //     expandedRowContent = expandedRowRender(record, hoverKey);
+        // }
 
         return (
             <div
@@ -97,22 +97,35 @@ class TableRow extends PureComponent {
             >
                 {
                     columns.map((column, i) => {
-                        const index = i + 1;
+                        // return (
+                        //     <TableCell
+                        //         key={`${hoverKey}_${i}`}
+                        //         column={column}
+                        //         record={record}
+                        //         cellWidth={cellWidths[i]}
+                        //     />
+                        // );
+                        const render = column.render;
+                        const text = record && record[column.dataKey || column.dataIndex];
+
                         return (
-                            <TableCell
-                                key={`${hoverKey}_${index}`}
-                                column={column}
-                                record={record}
-                                cellWidth={cellWidths[i]}
-                            />
+                            <div
+                                key={i}
+                                className={styles.td}
+                                style={{ minWidth: cellWidths[i] }}
+                            >
+                                <div className={styles.tdContent}>
+                                    {typeof render === 'function' ? render(text, record) : text}
+                                </div>
+                            </div>
                         );
                     })
                 }
-                { isRowExpanded &&
+                {/* { isRowExpanded &&
                     <section className={styles['tr-expand']}>
                         { expandedRowContent }
                     </section>
-                }
+                } */}
             </div>
         );
     }

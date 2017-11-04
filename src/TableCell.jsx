@@ -18,13 +18,10 @@ class TableCell extends Component {
     };
 
     shouldComponentUpdate(nextProps, nextState) {
-        return (
-            (typeof nextProps.column.render === 'function')
-            ||
-            nextProps.column !== this.props.column
-            ||
-            nextProps.record !== this.props.record
-        );
+        if (typeof nextProps.column.render !== 'function') return false;
+        if (nextProps.record.checked === this.props.record.checked) return false;
+
+        return true;
     }
 
     render() {

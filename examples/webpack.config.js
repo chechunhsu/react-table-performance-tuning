@@ -14,17 +14,17 @@ module.exports = {
     module: {
         rules: [
             // http://survivejs.com/webpack_react/linting_in_webpack/
-            {
-                test: /\.jsx?$/,
-                loader: 'eslint-loader',
-                enforce: 'pre',
-                exclude: /node_modules/
-            },
-            {
-                test: /\.styl$/,
-                loader: 'stylint-loader',
-                enforce: 'pre'
-            },
+            // {
+            //     test: /\.jsx?$/,
+            //     loader: 'eslint-loader',
+            //     enforce: 'pre',
+            //     exclude: /node_modules/
+            // },
+            // {
+            //     test: /\.styl$/,
+            //     loader: 'stylint-loader',
+            //     enforce: 'pre'
+            // },
             {
                 test: /\.jsx?$/,
                 loader: 'babel-loader',

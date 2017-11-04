@@ -10,12 +10,12 @@ class TableHeader extends Component {
         scrollLeft: PropTypes.number
     };
 
-    componentDidUpdate(prevProps, prevState) {
-        const { scrollLeft } = this.props;
-        if (this.header.scrollLeft !== scrollLeft) {
-            this.header.scrollLeft = scrollLeft;
-        }
-    }
+    // componentDidUpdate(prevProps, prevState) {
+    //     const { scrollLeft } = this.props;
+    //     if (this.header.scrollLeft !== scrollLeft) {
+    //         this.header.scrollLeft = scrollLeft;
+    //     }
+    // }
 
     shouldComponentUpdate(nextProps, nextState) {
         return (
@@ -72,13 +72,13 @@ class TableHeader extends Component {
                     key={key}
                     className={classNames(
                         styles.th,
-                        column.className,
-                        column.headerClassName
+                        // column.className,
+                        // column.headerClassName
                     )}
-                    style={{
-                        ...column.style,
-                        ...column.headerStyle
-                    }}
+                    // style={{
+                    //     ...column.style,
+                    //     ...column.headerStyle
+                    // }}
                 >
                     <div className={styles.thContent}>
                         {typeof column.title === 'function' ? column.title() : column.title}

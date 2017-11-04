@@ -500,12 +500,12 @@ class Table extends PureComponent {
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.maxHeight !== this.props.maxHeight ||
-            prevProps.data !== this.props.data) {
-            this.actions.setTableSize();
-        }
-    }
+    // componentDidUpdate(prevProps, prevState) {
+    //     if (prevProps.maxHeight !== this.props.maxHeight ||
+    //         prevProps.data !== this.props.data) {
+    //         this.actions.setTableSize();
+    //     }
+    // }
 
     getInitState () {
         return {
@@ -709,13 +709,13 @@ class Table extends PureComponent {
                 className={classNames(
                     className,
                     styles.tableWrapper,
-                    { [styles.tableMinimalism]: !bordered },
+                    // { [styles.tableMinimalism]: !bordered },
                     { [styles.tableBordered]: bordered },
-                    { [styles.tableExtendColumnWidth]: !justified },
-                    { [styles.tableFixedHeader]: useFixedHeader },
-                    { [styles.tableNoData]: !data || data.length === 0 },
+                    // { [styles.tableExtendColumnWidth]: !justified },
+                    // { [styles.tableFixedHeader]: useFixedHeader },
+                    // { [styles.tableNoData]: !data || data.length === 0 },
                     { [styles.tableHover]: hoverable },
-                    { [styles.tableSortable]: sortable }
+                    // { [styles.tableSortable]: sortable }
                 )}
                 ref={(node) => {
                     if (node) {
@@ -723,13 +723,13 @@ class Table extends PureComponent {
                     }
                 }}
             >
-                { title && this.renderTitle() }
+                {/* { title && this.renderTitle() } */}
                 <div className={styles.tableArea}>
                     { this.renderTable() }
-                    { this.isAnyColumnsLeftFixed() && this.renderFixedLeftTable() }
-                    { loading && this.renderLoader() }
+                    {/* { this.isAnyColumnsLeftFixed() && this.renderFixedLeftTable() } */}
+                    {/* { loading && this.renderLoader() } */}
                 </div>
-                { footer && this.renderFooter() }
+                {/* { footer && this.renderFooter() } */}
             </div>
         );
     }

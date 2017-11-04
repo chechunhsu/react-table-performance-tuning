@@ -41,7 +41,7 @@ class TableBody extends PureComponent {
 
         this.state = {
             startIndex: 0,
-            endIndex: 11
+            endIndex: 9
         };
     }
 
@@ -67,12 +67,12 @@ class TableBody extends PureComponent {
         this.body.removeEventListener('touchstart', onTouchStart);
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        const { scrollTop } = this.props;
-        if (this.body.scrollTop !== scrollTop) {
-            this.body.scrollTop = scrollTop;
-        }
-    }
+    // componentDidUpdate(prevProps, prevState) {
+    //     const { scrollTop } = this.props;
+    //     if (this.body.scrollTop !== scrollTop) {
+    //         this.body.scrollTop = scrollTop;
+    //     }
+    // }
 
     getRowKey (record, index) {
         const rowKey = this.props.rowKey;
@@ -94,8 +94,8 @@ class TableBody extends PureComponent {
             cellWidths
         } = this.props;
         const { startIndex, endIndex } = this.state;
-        const startHeight = startIndex * 37;
-        const endHeight = (records.length - endIndex) * 37;
+        const startHeight = startIndex * CELL_HEIGHT;
+        const endHeight = (records.length - endIndex) * CELL_HEIGHT;
 
         const noData = (!records || records.length === 0);
 
@@ -114,12 +114,12 @@ class TableBody extends PureComponent {
                             <TableRow
                                 columns={columns}
                                 currentHoverKey={currentHoverKey}
-                                expandedRowKeys={expandedRowKeys}
-                                expandedRowRender={expandedRowRender}
+                                // expandedRowKeys={expandedRowKeys}
+                                // expandedRowRender={expandedRowRender}
                                 hoverKey={key}
                                 index={index}
                                 key={key}
-                                onHover={onRowHover}
+                                // onHover={onRowHover}
                                 onRowClick={onRowClick}
                                 record={row}
                                 rowClassName={rowClassName}
@@ -128,12 +128,12 @@ class TableBody extends PureComponent {
                         );
                     })
                 }
-                {
+                {/* {
                     noData &&
                     <div className={styles.tablePlaceholder}>
                         { emptyText() }
                     </div>
-                }
+                } */}
                 <div style={{ height: endHeight }}/>
             </div>
         );
