@@ -26980,6 +26980,7 @@ exports.default = Table;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -27012,6 +27013,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var CELL_HEIGHT = 37;
 var HEADER_HEIGHT = 38;
 
+var between = function between(value, A, B) {
+    return value >= A && value <= B;
+};
+
 var TableBody = (_temp = _class = function (_PureComponent) {
     _inherits(TableBody, _PureComponent);
 
@@ -27023,8 +27028,9 @@ var TableBody = (_temp = _class = function (_PureComponent) {
         _this.handleScroll = function (e) {
             var bodyHeight = e.target.clientHeight;
             var scrollTop = e.target.scrollTop;
-            var startIndex = Math.floor(scrollTop / CELL_HEIGHT) - 1;
-            var endIndex = startIndex + Math.ceil(bodyHeight / CELL_HEIGHT);
+            var scrollBottom = scrollTop + bodyHeight;
+            var startIndex = Math.floor((scrollTop - HEADER_HEIGHT) / CELL_HEIGHT);
+            var endIndex = Math.ceil(scrollBottom / CELL_HEIGHT);
 
             _this.setState(function (_) {
                 return { startIndex: startIndex, endIndex: endIndex };
@@ -27047,8 +27053,8 @@ var TableBody = (_temp = _class = function (_PureComponent) {
                 onScroll = _props.onScroll;
 
             this.body.parentNode.addEventListener('scroll', this.handleScroll);
-            this.body.addEventListener('mouseover', onMouseOver);
-            this.body.addEventListener('touchstart', onTouchStart);
+            // this.body.addEventListener('mouseover', onMouseOver);
+            // this.body.addEventListener('touchstart', onTouchStart);
         }
     }, {
         key: 'componentWillUnmount',
@@ -27059,23 +27065,16 @@ var TableBody = (_temp = _class = function (_PureComponent) {
                 onScroll = _props2.onScroll;
 
             this.body.parentNode.removeEventListener('scroll', this.handleScroll);
-            this.body.removeEventListener('mouseover', onMouseOver);
-            this.body.removeEventListener('touchstart', onTouchStart);
+            // this.body.removeEventListener('mouseover', onMouseOver);
+            // this.body.removeEventListener('touchstart', onTouchStart);
         }
-
-        // componentDidUpdate(prevProps, prevState) {
-        //     const { scrollTop } = this.props;
-        //     if (this.body.scrollTop !== scrollTop) {
-        //         this.body.scrollTop = scrollTop;
-        //     }
-        // }
-
     }, {
         key: 'getRowKey',
         value: function getRowKey(record, index) {
             var rowKey = this.props.rowKey;
             var key = typeof rowKey === 'function' ? rowKey(record, index) : record[rowKey];
-            return key === undefined ? 'table_row_' + index : key;
+
+            return key || 'table_row_' + index;
         }
     }, {
         key: 'render',
@@ -27087,44 +27086,32 @@ var TableBody = (_temp = _class = function (_PureComponent) {
                 currentHoverKey = _props3.currentHoverKey,
                 expandedRowKeys = _props3.expandedRowKeys,
                 expandedRowRender = _props3.expandedRowRender,
-                emptyText = _props3.emptyText,
                 onRowHover = _props3.onRowHover,
                 onRowClick = _props3.onRowClick,
                 records = _props3.records,
                 rowClassName = _props3.rowClassName,
                 cellWidths = _props3.cellWidths;
-            var _state = this.state,
-                startIndex = _state.startIndex,
-                endIndex = _state.endIndex;
 
+            var startIndex = Math.max(this.state.startIndex, 0);
+            var endIndex = Math.min(this.state.endIndex, records.length);
             var startHeight = startIndex * CELL_HEIGHT;
             var endHeight = (records.length - endIndex) * CELL_HEIGHT;
 
-            var noData = !records || records.length === 0;
-
             return _react2.default.createElement(
                 'div',
-                {
-                    className: _index2.default.tbody,
-                    ref: function ref(node) {
+                { className: _index2.default.tbody, ref: function ref(node) {
                         _this2.body = node;
-                    }
-                },
+                    } },
                 _react2.default.createElement('div', { style: { height: startHeight } }),
                 records.filter(function (row, index) {
-                    return index >= startIndex && index <= endIndex;
+                    return between(index, startIndex, endIndex);
                 }).map(function (row, index) {
-                    var key = _this2.getRowKey(row, index);
-                    return _react2.default.createElement(_TableRow2.default, {
+                    return (0, _TableRow2.default)({
                         columns: columns,
-                        currentHoverKey: currentHoverKey
-                        // expandedRowKeys={expandedRowKeys}
-                        // expandedRowRender={expandedRowRender}
-                        , hoverKey: key,
+                        currentHoverKey: currentHoverKey,
+                        hoverKey: _this2.getRowKey(row, index),
                         index: index,
-                        key: key
-                        // onHover={onRowHover}
-                        , onRowClick: onRowClick,
+                        onRowClick: onRowClick,
                         record: row,
                         rowClassName: rowClassName,
                         cellWidths: cellWidths
@@ -27153,9 +27140,6 @@ var TableBody = (_temp = _class = function (_PureComponent) {
     scrollTop: _propTypes2.default.number,
     cellWidths: _propTypes2.default.array
 }, _class.defaultProps = {
-    emptyText: function emptyText() {
-        return 'No Data';
-    },
     onMouseOver: function onMouseOver() {},
     onTouchStart: function onTouchStart() {},
     onScroll: function onScroll() {},
@@ -27451,10 +27435,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _class, _temp2;
-
 var _classnames = __webpack_require__("./node_modules/classnames/index.js");
 
 var _classnames2 = _interopRequireDefault(_classnames);
@@ -27479,153 +27459,54 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var TableRow = (_temp2 = _class = function (_PureComponent) {
-    _inherits(TableRow, _PureComponent);
-
-    function TableRow() {
-        var _ref;
-
-        var _temp, _this, _ret;
-
-        _classCallCheck(this, TableRow);
-
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
-
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = TableRow.__proto__ || Object.getPrototypeOf(TableRow)).call.apply(_ref, [this].concat(args))), _this), _this.actions = {
-            handleRowClick: function handleRowClick(e) {
-                var _this$props = _this.props,
-                    onRowClick = _this$props.onRowClick,
-                    record = _this$props.record,
-                    index = _this$props.index;
-
-                onRowClick(record, index, e);
-            }
-            // handleRowMouseLeave: () => {
-            //     const { hoverKey, onHover } = this.props;
-            //     onHover(false, hoverKey);
-            // },
-            // handleRowMouseOver: () => {
-            //     const { hoverKey, onHover } = this.props;
-            //     onHover(true, hoverKey);
-            // }
-        }, _temp), _possibleConstructorReturn(_this, _ret);
-    }
-
-    _createClass(TableRow, [{
-        key: 'render',
-
-
-        // componentDidMount() {
-        //     const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
-        //     this.row.addEventListener('mouseenter', handleRowMouseOver);
-        //     this.row.addEventListener('mouseleave', handleRowMouseLeave);
-        // }
-        //
-        // componentWillUnmount() {
-        //     const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
-        //     this.row.removeEventListener('mouseenter', handleRowMouseOver);
-        //     this.row.removeEventListener('mouseleave', handleRowMouseLeave);
-        // }
-
-        // isRowExpanded (record, key) {
-        //     const rows = this.props.expandedRowKeys.filter((i) => {
-        //         return i === key;
-        //     });
-        //     return rows[0];
-        // }
-
-        value: function render() {
-            var _this2 = this;
-
-            var _props = this.props,
-                columns = _props.columns,
-                currentHoverKey = _props.currentHoverKey,
-                expandedRowRender = _props.expandedRowRender,
-                hoverKey = _props.hoverKey,
-                record = _props.record,
-                rowClassName = _props.rowClassName,
-                cellWidths = _props.cellWidths;
-            var handleRowClick = this.actions.handleRowClick;
-
-            var className = rowClassName(record, hoverKey);
-            // const isRowExpanded = this.isRowExpanded(record, hoverKey);
-            // let expandedRowContent;
-            // if (expandedRowRender && isRowExpanded) {
-            //     expandedRowContent = expandedRowRender(record, hoverKey);
-            // }
-
-            return _react2.default.createElement(
-                'div',
-                {
-                    className: (0, _classnames2.default)(_index2.default.tr, className, _defineProperty({}, _index2.default['tr-hover'], currentHoverKey === hoverKey)),
-                    ref: function ref(node) {
-                        _this2.row = node;
-                    },
-                    onClick: handleRowClick
-                },
-                columns.map(function (column, i) {
-                    // return (
-                    //     <TableCell
-                    //         key={`${hoverKey}_${i}`}
-                    //         column={column}
-                    //         record={record}
-                    //         cellWidth={cellWidths[i]}
-                    //     />
-                    // );
-                    var render = column.render;
-                    var text = record && record[column.dataKey || column.dataIndex];
-
-                    return _react2.default.createElement(
-                        'div',
-                        {
-                            key: i,
-                            className: _index2.default.td,
-                            style: { minWidth: cellWidths[i] }
-                        },
-                        _react2.default.createElement(
-                            'div',
-                            { className: _index2.default.tdContent },
-                            typeof render === 'function' ? render(text, record) : text
-                        )
-                    );
-                })
-            );
-        }
-    }]);
-
-    return TableRow;
-}(_react.PureComponent), _class.propTypes = {
-    columns: _propTypes2.default.array,
-    currentHoverKey: _propTypes2.default.any,
-    expandedRowKeys: _propTypes2.default.array,
-    expandedRowRender: _propTypes2.default.func,
-    hoverKey: _propTypes2.default.any,
-    index: _propTypes2.default.number,
-    onHover: _propTypes2.default.func,
-    onRowClick: _propTypes2.default.func,
-    record: _propTypes2.default.object,
-    rowClassName: _propTypes2.default.func,
-    cellWidths: _propTypes2.default.array
-}, _class.defaultProps = {
-    expandedRowKeys: [],
-    expandedRowRender: function expandedRowRender() {},
-    onHover: function onHover() {},
-    onRowClick: function onRowClick() {},
-    record: {},
-    rowClassName: function rowClassName() {
-        return '';
+exports.default = function () {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        record: {},
+        rowClassName: function rowClassName(_) {
+            return '';
+        },
+        cellWidths: []
     },
-    cellWidths: []
-}, _temp2);
-exports.default = TableRow;
+        columns = _ref.columns,
+        currentHoverKey = _ref.currentHoverKey,
+        hoverKey = _ref.hoverKey,
+        record = _ref.record,
+        index = _ref.index,
+        rowClassName = _ref.rowClassName,
+        cellWidths = _ref.cellWidths,
+        onRowClick = _ref.onRowClick;
+
+    var handleRowClick = function handleRowClick(e) {
+        onRowClick(record, index, e);
+    };
+    var className = rowClassName(record, hoverKey);
+
+    return _react2.default.createElement(
+        'div',
+        {
+            key: hoverKey,
+            className: (0, _classnames2.default)(_index2.default.tr, className, _defineProperty({}, _index2.default['tr-hover'], currentHoverKey === hoverKey)),
+            onClick: handleRowClick },
+        columns.map(renderCell(cellWidths, record))
+    );
+};
+
+var renderCell = function renderCell(cellWidths, record) {
+    return function (column, index) {
+        var render = column.render;
+        var text = record && record[column.dataKey || column.dataIndex];
+
+        return _react2.default.createElement(
+            'div',
+            { key: index, className: _index2.default.td, style: { minWidth: cellWidths[index] } },
+            _react2.default.createElement(
+                'div',
+                { className: _index2.default.tdContent },
+                typeof render === 'function' ? render(text, record) : text
+            )
+        );
+    };
+};
 
 /***/ }),
 
@@ -27940,4 +27821,4 @@ exports.default = uniqueid;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=bundle.js.map?85e07e5473a9a5d8a5ac
+//# sourceMappingURL=bundle.js.map?a4112a7b6bf5e0fb56c3
