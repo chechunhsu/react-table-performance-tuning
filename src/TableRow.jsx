@@ -4,131 +4,48 @@ import PropTypes from 'prop-types';
 import styles from './index.styl';
 import TableCell from './TableCell';
 
-class TableRow extends PureComponent {
-    static propTypes = {
-        columns: PropTypes.array,
-        currentHoverKey: PropTypes.any,
-        expandedRowKeys: PropTypes.array,
-        expandedRowRender: PropTypes.func,
-        hoverKey: PropTypes.any,
-        index: PropTypes.number,
-        onHover: PropTypes.func,
-        onRowClick: PropTypes.func,
-        record: PropTypes.object,
-        rowClassName: PropTypes.func,
-        cellWidths: PropTypes.array
-    };
+export default ({
+    columns,
+    currentHoverKey,
+    hoverKey,
+    record,
+    index,
+    rowClassName,
+    cellWidths,
+    onRowClick
+} = {
+  record: {},
+  rowClassName: _ => '',
+  cellWidths: []
+}) => {
+  const handleRowClick = e => {
+      onRowClick(record, index, e);
+  };
+  const className = rowClassName(record, hoverKey);
 
-    static defaultProps = {
-        expandedRowKeys: [],
-        expandedRowRender: () => {},
-        onHover: () => {},
-        onRowClick: () => {},
-        record: {},
-        rowClassName: () => {
-            return '';
-        },
-        cellWidths: []
-    };
+  return (
+      <div
+        key={hoverKey}
+        className={classNames(
+            styles.tr,
+            className,
+            { [styles['tr-hover']]: (currentHoverKey === hoverKey) }
+        )}
+        onClick={handleRowClick}>
+        { columns.map(renderCell(cellWidths, record)) }
+      </div>
+  );
+};
 
-    actions = {
-        handleRowClick: (e) => {
-            const { onRowClick, record, index } = this.props;
-            onRowClick(record, index, e);
-        },
-        // handleRowMouseLeave: () => {
-        //     const { hoverKey, onHover } = this.props;
-        //     onHover(false, hoverKey);
-        // },
-        // handleRowMouseOver: () => {
-        //     const { hoverKey, onHover } = this.props;
-        //     onHover(true, hoverKey);
-        // }
-    };
+const renderCell = (cellWidths, record) => (column, index) => {
+    const render = column.render;
+    const text = record && record[column.dataKey || column.dataIndex];
 
-    // componentDidMount() {
-    //     const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
-    //     this.row.addEventListener('mouseenter', handleRowMouseOver);
-    //     this.row.addEventListener('mouseleave', handleRowMouseLeave);
-    // }
-    //
-    // componentWillUnmount() {
-    //     const { handleRowMouseOver, handleRowMouseLeave } = this.actions;
-    //     this.row.removeEventListener('mouseenter', handleRowMouseOver);
-    //     this.row.removeEventListener('mouseleave', handleRowMouseLeave);
-    // }
-
-    // isRowExpanded (record, key) {
-    //     const rows = this.props.expandedRowKeys.filter((i) => {
-    //         return i === key;
-    //     });
-    //     return rows[0];
-    // }
-
-    render() {
-        const {
-            columns,
-            currentHoverKey,
-            expandedRowRender,
-            hoverKey,
-            record,
-            rowClassName,
-            cellWidths
-        } = this.props;
-        const { handleRowClick } = this.actions;
-        const className = rowClassName(record, hoverKey);
-        // const isRowExpanded = this.isRowExpanded(record, hoverKey);
-        // let expandedRowContent;
-        // if (expandedRowRender && isRowExpanded) {
-        //     expandedRowContent = expandedRowRender(record, hoverKey);
-        // }
-
-        return (
-            <div
-                className={classNames(
-                    styles.tr,
-                    className,
-                    { [styles['tr-hover']]: (currentHoverKey === hoverKey) }
-                )}
-                ref={node => {
-                    this.row = node;
-                }}
-                onClick={handleRowClick}
-            >
-                {
-                    columns.map((column, i) => {
-                        // return (
-                        //     <TableCell
-                        //         key={`${hoverKey}_${i}`}
-                        //         column={column}
-                        //         record={record}
-                        //         cellWidth={cellWidths[i]}
-                        //     />
-                        // );
-                        const render = column.render;
-                        const text = record && record[column.dataKey || column.dataIndex];
-
-                        return (
-                            <div
-                                key={i}
-                                className={styles.td}
-                                style={{ minWidth: cellWidths[i] }}
-                            >
-                                <div className={styles.tdContent}>
-                                    {typeof render === 'function' ? render(text, record) : text}
-                                </div>
-                            </div>
-                        );
-                    })
-                }
-                {/* { isRowExpanded &&
-                    <section className={styles['tr-expand']}>
-                        { expandedRowContent }
-                    </section>
-                } */}
+    return (
+        <div key={index} className={styles.td} style={{ minWidth: cellWidths[index] }}>
+            <div className={styles.tdContent}>
+                {typeof render === 'function' ? render(text, record) : text}
             </div>
-        );
-    }
-}
-
-export default TableRow;
+        </div>
+    );
+};
