@@ -1,6 +1,8 @@
 # [JSDC 2017] 趨勢科技 - 誰是效能王
 
-Demo: https://trendmicro-frontend.github.io/react-table-performance-tuning/
+Original Demo: https://trendmicro-frontend.github.io/react-table-performance-tuning
+
+My Tuned Demo: https://chechunhsu.github.io/react-table-performance-tuning
 
 # 活動說明
 * 針對題目範例做效能優化，重繪時間越短則名次越佳，現場工作人員驗證後會將結果即時更新在英雄榜和臉書
